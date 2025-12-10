@@ -10,13 +10,13 @@ import androidx.room.Update
 @Dao
 interface TupperDao {
     @Insert
-    suspend fun insertTupper(tupper: Tupper)
-
-    @Update
-    suspend fun updateTupper(tupper: Tupper)
+    suspend fun insertTupper(tupper: Tupper): Long
 
     @Delete
     suspend fun deleteTupper(tupper: Tupper)
+
+    @Update
+    suspend fun updateTupper(tupper: Tupper)
 
     @Query("SELECT * FROM tuppers ORDER BY creationDate DESC")
     fun getAllTuppers(): LiveData<List<Tupper>>
@@ -27,6 +27,6 @@ interface TupperDao {
     @Delete
     suspend fun deleteItem(item: TupperItem)
 
-    @Query("SELECT * FROM tupper_items WHERE tupperOwnerId = :tupperId ORDER BY uid DESC")
+    @Query("SELECT * FROM tupper_items WHERE tupperOwnerId = :tupperId")
     fun getItemsForTupper(tupperId: Int): LiveData<List<TupperItem>>
 }

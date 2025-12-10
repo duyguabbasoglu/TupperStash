@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TupperStash</string>
     <string name="create_new_tupper">Create New Tupper</string>
-    <string name="tupper_name_hint">Tupper Name (e.g. My Favorites)</string>
+    <string name="tupper_name_hint">Tupper Name (e.g. Favorites)</string>
 
     <string name="select_color">Select Color:</string>
 
@@ -10,15 +10,23 @@
     <string name="btn_add">Add</string>
     <string name="btn_cancel">Cancel</string>
 
-    <string name="error_empty_name">Name cannot be empty!</string>
-    <string name="msg_tupper_created">Tupper created!</string>
+    <string name="error_empty_name">Name cannot be empty</string>
+    <string name="msg_tupper_created">Tupper created</string>
     <string name="msg_tupper_deleted">deleted</string>
     <string name="msg_item_deleted">Item deleted</string>
-    <string name="error_tupper_not_found">Error: Tupper not found!</string>
+    <string name="error_tupper_not_found">Error: Tupper not found</string>
 
     <string name="dialog_add_item_title">Add New Item</string>
     <string name="radio_text">Text</string>
     <string name="radio_image">Image (Meme)</string>
     <string name="content_hint">Enter text or image name</string>
     <string name="error_empty_content">Content cannot be empty!</string>
+
+    <string name="app_title_main">TupperStash</string>
+    <string name="app_subtitle_main">The one you want to store</string>
+    <string name="dialog_collection_name">Give a name to your collection</string>
+    <string name="btn_online_recipe">Api</string> <string name="msg_downloading">Downloading content...</string>
+    <string name="msg_saved">Saved</string>
+    <string name="msg_error">Error occurred</string>
+    <string name="msg_updated">Name updated</string>
 </resources>

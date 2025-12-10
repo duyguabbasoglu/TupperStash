@@ -7,13 +7,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.duyguabbasoglu.hw2.adapter.TupperAdapter
+import com.duyguabbasoglu.hw2.adapter.TupperListener
+import com.duyguabbasoglu.hw2.api.ApiClient
+import com.duyguabbasoglu.hw2.api.ApiResponse
+import com.duyguabbasoglu.hw2.api.ApiService
 import com.duyguabbasoglu.hw2.databinding.ActivityMainBinding
 import com.duyguabbasoglu.hw2.model.AppDatabase
 import com.duyguabbasoglu.hw2.model.Tupper
+import com.duyguabbasoglu.hw2.model.TupperItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), TupperListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var db: AppDatabase
@@ -25,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         db = AppDatabase.getDatabase(this)
+
         setupRecyclerView()
 
         db.tupperDao().getAllTuppers().observe(this) { listOfTuppers ->
@@ -34,22 +43,77 @@ class MainActivity : AppCompatActivity() {
         binding.fabAddTupper.setOnClickListener {
             showAddTupperDialog()
         }
+
+        binding.btnDownloadRecipe.setOnClickListener {
+            val service = ApiClient.getClient().create(ApiService::class.java)
+            val call = service.getOnlineData()
+
+            Toast.makeText(this, "Downloading custom tuppers...", Toast.LENGTH_SHORT).show()
+
+            call.enqueue(object : Callback<ApiResponse> {
+                override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                    if (response.isSuccessful && response.body()?.tupperList != null) {
+
+                        val onlineList = response.body()!!.tupperList!!
+
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            for (apiTupper in onlineList) {
+                                val newTupper = Tupper(
+                                    name = apiTupper.name,
+                                    creationDate = System.currentTimeMillis(),
+                                    colorCode = apiTupper.color
+                                )
+                                val tupperId = db.tupperDao().insertTupper(newTupper).toInt()
+
+                                for (apiItem in apiTupper.items) {
+                                    val typeCode = if (apiItem.type == "image") 1 else 0
+                                    val newItem = TupperItem(
+                                        tupperOwnerId = tupperId,
+                                        itemType = typeCode,
+                                        title = apiItem.title,
+                                        contentData = apiItem.content
+                                    )
+                                    db.tupperDao().insertItem(newItem)
+                                }
+                            }
+                        }
+
+                        runOnUiThread {
+                            Toast.makeText(this@MainActivity, "All tuppers imported! 🎉", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                    Toast.makeText(this@MainActivity, "Connection Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
     }
 
     private fun setupRecyclerView() {
-        adapter = TupperAdapter(
-            onTupperClick = { tupper -> onTupperClicked(tupper) },
-            onDeleteClick = { tupper -> deleteTupperFromDb(tupper) }
-        )
+        // Interface (this) gönderiyoruz
+        adapter = TupperAdapter(this)
         binding.rvTupperList.layoutManager = LinearLayoutManager(this)
         binding.rvTupperList.adapter = adapter
+    }
+
+    // Interface Metodları
+    override fun onTupperClicked(tupper: Tupper) {
+        val intent = Intent(this, TupperDetailActivity::class.java)
+        intent.putExtra("selected_tupper", tupper)
+        startActivity(intent)
+    }
+
+    override fun onTupperDeleted(tupper: Tupper) {
+        deleteTupperFromDb(tupper)
     }
 
     private fun deleteTupperFromDb(tupper: Tupper) {
         lifecycleScope.launch(Dispatchers.IO) {
             db.tupperDao().deleteTupper(tupper)
         }
-        Toast.makeText(this, "${tupper.name} ${getString(R.string.msg_tupper_deleted)}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "${tupper.name} deleted", Toast.LENGTH_SHORT).show()
     }
 
     private fun showAddTupperDialog() {
@@ -101,16 +165,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             dialog.dismiss()
-            Toast.makeText(this, getString(R.string.msg_tupper_created), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Tupper Created!", Toast.LENGTH_SHORT).show()
         }
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
-    }
-
-    private fun onTupperClicked(tupper: Tupper) {
-        val intent = Intent(this, TupperDetailActivity::class.java)
-        intent.putExtra("selected_tupper", tupper)
-        startActivity(intent)
     }
 }

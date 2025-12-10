@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.duyguabbasoglu.hw2.R
 import com.duyguabbasoglu.hw2.model.TupperItem
+import com.squareup.picasso.Picasso // Picasso import edildi
 
 class TupperDetailAdapter(
     private val onDeleteClick: (TupperItem) -> Unit
@@ -42,6 +43,7 @@ class TupperDetailAdapter(
         }
     }
 
+    // image upload
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val currentItem = items[position]
 
@@ -53,22 +55,33 @@ class TupperDetailAdapter(
         if (getItemViewType(position) == TYPE_TEXT) {
             (holder as TextViewHolder).tvContent.text = currentItem.contentData
         } else {
-            val context = holder.itemView.context
-            try {
-                val imageResId = context.resources.getIdentifier(
-                    currentItem.contentData.trim(),
-                    "drawable",
-                    context.packageName
-                )
+            val imageView = (holder as ImageViewHolder).ivMeme
+            val content = currentItem.contentData.trim()
 
-                if (imageResId != 0) {
-                    (holder as ImageViewHolder).ivMeme.setImageResource(imageResId)
-                } else {
-                    (holder as ImageViewHolder).ivMeme.setImageResource(R.mipmap.ic_launcher)
+            if (content.startsWith("http")) {
+                Picasso.get()
+                    .load(content)
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.mipmap.ic_launcher)
+                    .fit()
+                    .centerCrop()
+                    .into(imageView)
+            } else {
+                val context = holder.itemView.context
+                try {
+                    val imageResId = context.resources.getIdentifier(
+                        content,
+                        "drawable",
+                        context.packageName
+                    )
+                    if (imageResId != 0) {
+                        imageView.setImageResource(imageResId)
+                    } else {
+                        imageView.setImageResource(R.mipmap.ic_launcher)
+                    }
+                } catch (e: Exception) {
+                    imageView.setImageResource(R.mipmap.ic_launcher)
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                (holder as ImageViewHolder).ivMeme.setImageResource(R.mipmap.ic_launcher)
             }
         }
     }

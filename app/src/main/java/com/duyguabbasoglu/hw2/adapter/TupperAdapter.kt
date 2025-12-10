@@ -1,17 +1,18 @@
 package com.duyguabbasoglu.hw2.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.duyguabbasoglu.hw2.databinding.ItemTupperBinding
 import com.duyguabbasoglu.hw2.model.Tupper
+import com.duyguabbasoglu.hw2.view.TupperIconView // Bunu import ettiğinden emin ol
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class TupperAdapter(
-    private val onTupperClick: (Tupper) -> Unit,
-    private val onDeleteClick: (Tupper) -> Unit
+    private val listener: TupperListener
 ) : RecyclerView.Adapter<TupperAdapter.TupperViewHolder>() {
 
     private var tupperList = emptyList<Tupper>()
@@ -31,11 +32,14 @@ class TupperAdapter(
 
             val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
             tvDate.text = sdf.format(Date(currentTupper.creationDate))
+            (ivTupperIcon as? TupperIconView)?.setTupperColor(currentTupper.colorCode)
 
-            holder.binding.ivTupperIcon.setColorFilter(android.graphics.Color.parseColor(currentTupper.colorCode))
+            ivTupperIcon.setOnClickListener {
+                android.widget.Toast.makeText(root.context, "Color: ${currentTupper.colorCode}", android.widget.Toast.LENGTH_SHORT).show()
+            }
 
-            root.setOnClickListener { onTupperClick(currentTupper) }
-            btnDelete.setOnClickListener { onDeleteClick(currentTupper) }
+            root.setOnClickListener { listener.onTupperClicked(currentTupper) }
+            btnDelete.setOnClickListener { listener.onTupperDeleted(currentTupper) }
         }
     }
 

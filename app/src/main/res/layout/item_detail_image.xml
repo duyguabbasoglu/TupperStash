@@ -7,11 +7,11 @@
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp">
 
-    <ImageView
+    <com.duyguabbasoglu.hw2.view.SquareImageView
         android:id="@+id/ivMeme"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="wrap_content"
         android:scaleType="centerCrop"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@drawable/flower" />
 
 </androidx.cardview.widget.CardView>
