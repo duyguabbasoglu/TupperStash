@@ -1,6 +1,5 @@
 package com.duyguabbasoglu.hw2.adapter
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -30,18 +29,11 @@ class TupperAdapter(
         holder.binding.apply {
             tvTupperName.text = currentTupper.name
 
-            // Tarihi formatla (Long -> String)
             val sdf = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
             tvDate.text = sdf.format(Date(currentTupper.creationDate))
 
-            // Renk kodunu uygula (Try-catch hatayı önler)
-            try {
-                viewColorIndicator.setBackgroundColor(Color.parseColor(currentTupper.colorCode))
-            } catch (e: Exception) {
-                viewColorIndicator.setBackgroundColor(Color.GRAY) // Hatalı renk gelirse gri yap
-            }
+            holder.binding.ivTupperIcon.setColorFilter(android.graphics.Color.parseColor(currentTupper.colorCode))
 
-            // Tıklama olayları
             root.setOnClickListener { onTupperClick(currentTupper) }
             btnDelete.setOnClickListener { onDeleteClick(currentTupper) }
         }
@@ -49,7 +41,6 @@ class TupperAdapter(
 
     override fun getItemCount() = tupperList.size
 
-    // Veriyi güncellemek için bu metodu çağıracağız
     fun setData(newTuppers: List<Tupper>) {
         this.tupperList = newTuppers
         notifyDataSetChanged()

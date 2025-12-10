@@ -3,30 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="8dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="12dp"
     android:layout_margin="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:background="#FFFFFF"
+        android:padding="32dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create New Tupper"
-            android:textSize="20sp"
+            android:text="@string/create_new_tupper"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="#333333"
             android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Koleksiyonuna bir isim ver"
+            android:textSize="14sp"
+            android:textColor="#888888"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Tupper Name (e.g. Dank Memes)">
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:hint="@string/tupper_name_hint">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etTupperName"
@@ -37,24 +47,29 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select Color:"
-            android:layout_marginTop="16dp"
+            android:text="@string/select_color"
+            android:layout_marginTop="20dp"
+            android:textColor="#333333"
             android:textStyle="bold"/>
 
         <Spinner
             android:id="@+id/spColor"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="50dp"
             android:layout_marginTop="8dp"
-            android:background="@android:drawable/btn_dropdown"/>
+            android:padding="4dp"
+            android:background="@android:drawable/editbox_background_normal"/>
 
         <Button
             android:id="@+id/btnSave"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Create"
-            android:backgroundTint="#673AB7"/>
+            android:layout_height="60dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/btn_create"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"
+            android:backgroundTint="#6200EE"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

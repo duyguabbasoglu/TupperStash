@@ -4,23 +4,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/material_dynamic_neutral_variant20"
     tools:context=".MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvTupperList"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="TupperStash\nThe one you want to store"
+        android:textColor="#FFFFFF"
+        android:textSize="32sp"
+        android:textStyle="bold|italic"
+        android:gravity="center"
+        android:alpha="0.15"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTupperList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/material_dynamic_primary90"
+        android:clipToPadding="false"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddTupper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="24dp"
         android:src="@android:drawable/ic_input_add"
+        android:backgroundTint="#FF4081"
+        app:tint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

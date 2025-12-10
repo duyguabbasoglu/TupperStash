@@ -24,32 +24,23 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // init db
         db = AppDatabase.getDatabase(this)
         setupRecyclerView()
 
-        // observe data from db
         db.tupperDao().getAllTuppers().observe(this) { listOfTuppers ->
-            // Update the adapter with new list
             adapter.setData(listOfTuppers)
         }
 
         binding.fabAddTupper.setOnClickListener {
-            // Open the Custom Dialog to create a new Tupper
             showAddTupperDialog()
         }
     }
 
     private fun setupRecyclerView() {
         adapter = TupperAdapter(
-            onTupperClick = { tupper ->
-                onTupperClicked(tupper) // detail activity
-            },
-            onDeleteClick = { tupper ->
-                deleteTupperFromDb(tupper) // delete
-            }
+            onTupperClick = { tupper -> onTupperClicked(tupper) },
+            onDeleteClick = { tupper -> deleteTupperFromDb(tupper) }
         )
-
         binding.rvTupperList.layoutManager = LinearLayoutManager(this)
         binding.rvTupperList.adapter = adapter
     }
@@ -58,20 +49,19 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             db.tupperDao().deleteTupper(tupper)
         }
-        Toast.makeText(this, "${tupper.name} deleted", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "${tupper.name} ${getString(R.string.msg_tupper_deleted)}", Toast.LENGTH_SHORT).show()
     }
 
     private fun showAddTupperDialog() {
         val dialogBinding = layoutInflater.inflate(R.layout.dialog_add_tupper, null)
-
         val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
             .setView(dialogBinding)
             .create()
 
-        // dialog xml items
         val etName = dialogBinding.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etTupperName)
         val spColor = dialogBinding.findViewById<android.widget.Spinner>(R.id.spColor)
         val btnSave = dialogBinding.findViewById<android.widget.Button>(R.id.btnSave)
+
         val colorsMap = mapOf(
             "Red" to "#F44336",
             "Blue" to "#2196F3",
@@ -82,7 +72,6 @@ class MainActivity : AppCompatActivity() {
             "Teal" to "#009688"
         )
 
-        // baglanti kismi *
         val spinnerAdapter = android.widget.ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
@@ -91,38 +80,34 @@ class MainActivity : AppCompatActivity() {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spColor.adapter = spinnerAdapter
 
-
         btnSave.setOnClickListener {
             val name = etName.text.toString().trim()
             if (name.isEmpty()) {
-                etName.error = "Name cannot be empty!"
+                etName.error = getString(R.string.error_empty_name)
                 return@setOnClickListener
             }
 
             val selectedColorName = spColor.selectedItem.toString()
             val selectedColorCode = colorsMap[selectedColorName] ?: "#808080"
 
-            // create a new tupper obj.
             val newTupper = Tupper(
                 name = name,
                 creationDate = System.currentTimeMillis(),
                 colorCode = selectedColorCode
             )
 
-            // insert to db
             lifecycleScope.launch(Dispatchers.IO) {
                 db.tupperDao().insertTupper(newTupper)
             }
 
             dialog.dismiss()
-            Toast.makeText(this, "Tupper created!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.msg_tupper_created), Toast.LENGTH_SHORT).show()
         }
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
     }
 
-    // intent send
     private fun onTupperClicked(tupper: Tupper) {
         val intent = Intent(this, TupperDetailActivity::class.java)
         intent.putExtra("selected_tupper", tupper)
